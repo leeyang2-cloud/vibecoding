@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 시작 페이지</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+    background: #202124;
+    min-height: 100vh;
+    color: #e8eaed;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 상단 바 */
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 24px; background: #202124;
+    border-bottom: 1px solid #3c4043;
+  }
+  .logo-text { font-size: 1.6rem; font-weight: 400; }
+  .g{color:#8ab4f8}.o1{color:#f28b82}.o2{color:#fdd663}.g2{color:#8ab4f8}.l{color:#81c995}.e{color:#f28b82}
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-link { font-size: 0.85rem; color: #e8eaed; text-decoration: none; }
+  .topbar-link:hover { text-decoration: underline; }
+  .topbar-btn {
+    background: #8ab4f8; color: #202124; border: none;
+    border-radius: 4px; padding: 7px 16px; font-size: 0.88rem;
+    cursor: pointer; font-weight: 600;
+  }
+  .topbar-btn:hover { background: #d2e3fc; }
+
+  /* 검색바 */
+  .search-section {
+    display: flex; justify-content: center;
+    padding: 24px 16px 20px;
+  }
+  .search-box {
+    display: flex; align-items: center;
+    border: 1px solid #5f6368; border-radius: 24px;
+    padding: 10px 18px; background: #202124;
+    width: 100%; max-width: 580px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .search-box:hover, .search-box:focus-within { 
+    background: #303134; box-shadow: 0 1px 6px rgba(0,0,0,0.4); border-color: transparent; 
+  }
+  .search-box input {
+    flex: 1; border: none; outline: none;
+    font-size: 1rem; color: #e8eaed; background: transparent; padding: 0 10px;
+  }
+  .search-box input::placeholder { color: #9aa0a6; }
+  .search-icon { color: #9aa0a6; }
+  .search-btns { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
+  .search-btn {
+    background: #303134; border: 1px solid #303134; border-radius: 4px;
+    padding: 8px 16px; font-size: 0.88rem; color: #e8eaed;
+    cursor: pointer; font-family: inherit;
+  }
+  .search-btn:hover { border-color: #5f6368; color: #e8eaed; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+
+  /* 2x2 메모지 그리드 */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  /* 메모지 카드 */
+  .memo {
+    background: #303134;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s;
+  }
+  .memo:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2); }
+
+  /* 메모지 색상 헤더 바 */
+  .memo-bar {
+    height: 6px;
+    width: 100%;
+  }
+  .memo-clock .memo-bar  { background: #8ab4f8; }
+  .memo-todo  .memo-bar  { background: #81c995; }
+  .memo-weather .memo-bar{ background: #fdd663; }
+  .memo-news  .memo-bar  { background: #f28b82; }
+
+  .memo-body { padding: 20px 22px 22px; flex: 1; }
+  .memo-label {
+    font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; color: #9aa0a6; margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  /* 시계 */
+  .clock-big { font-size: 3.8rem; font-weight: 300; color: #e8eaed; letter-spacing: 2px; line-height: 1; }
+  .clock-date { font-size: 1rem; color: #9aa0a6; margin-top: 10px; }
+  .clock-greeting { font-size: 0.9rem; color: #9aa0a6; margin-top: 6px; }
+
+  /* 날씨 */
+  .weather-location { font-size: 0.85rem; color: #e8eaed; font-weight: 500; margin-bottom: 14px; }
+  .weather-main { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .weather-icon { font-size: 3.2rem; }
+  .weather-temp { font-size: 3rem; font-weight: 300; color: #e8eaed; }
+  .weather-desc { font-size: 0.9rem; color: #9aa0a6; margin-top: 4px; }
+  .weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .w-detail { background: #3c4043; border-radius: 6px; padding: 8px 12px; }
+  .w-detail .lbl { font-size: 0.7rem; color: #9aa0a6; }
+  .w-detail .val { font-size: 0.95rem; font-weight: 500; color: #e8eaed; margin-top: 2px; }
+
+  /* 뉴스 */
+  .refresh-btn {
+    background: none; border: 1px solid #5f6368; border-radius: 4px;
+    padding: 3px 10px; font-size: 0.75rem; color: #f28b82;
+    cursor: pointer; font-family: inherit; font-weight: 500;
+  }
+  .refresh-btn:hover { background: #3c4043; border-color: #f28b82; }
+  .news-list { display: flex; flex-direction: column; }
+  .news-item { padding: 9px 0; border-bottom: 1px solid #3c4043; cursor: pointer; }
+  .news-item:last-child { border-bottom: none; }
+  .news-item:hover { background: #3c4043; margin: 0 -6px; padding: 9px 6px; border-radius: 4px; }
+  .news-tag {
+    display: inline-block; font-size: 0.68rem; font-weight: 600;
+    color: #303134; background: #f28b82; border-radius: 4px;
+    padding: 1px 6px; margin-bottom: 3px;
+  }
+  .news-title { font-size: 0.88rem; font-weight: 500; color: #e8eaed; line-height: 1.4; }
+  .news-summary { font-size: 0.78rem; color: #9aa0a6; margin-top: 3px; line-height: 1.5; }
+  .news-time { font-size: 0.7rem; color: #9aa0a6; margin-top: 2px; }
+
+  /* 할 일 */
+  .todo-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .todo-input {
+    flex: 1; background: #202124; border: 1px solid #5f6368; border-radius: 4px;
+    padding: 7px 10px; font-size: 0.85rem; color: #e8eaed;
+    font-family: inherit; outline: none; transition: border-color 0.2s;
+  }
+  .todo-input:focus { border-color: #81c995; }
+  .todo-add-btn {
+    background: #81c995; color: #202124; border: none;
+    border-radius: 4px; padding: 7px 12px; font-size: 0.85rem;
+    cursor: pointer; font-family: inherit; font-weight: 600;
+  }
+  .todo-add-btn:hover { background: #5bb974; }
+  .todo-list { display: flex; flex-direction: column; gap: 5px; max-height: 240px; overflow-y: auto; }
+  .todo-item { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 6px; background: #202124; }
+  .todo-item:hover { background: #3c4043; }
+  .todo-check {
+    width: 17px; height: 17px; border: 2px solid #5f6368; border-radius: 50%;
+    cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .todo-check.done { background: #81c995; border-color: #81c995; }
+  .todo-check.done::after { content: '✓'; color: #202124; font-size: 0.65rem; font-weight: bold; }
+  .todo-text { flex: 1; font-size: 0.85rem; color: #e8eaed; cursor: pointer; }
+  .todo-text.done { text-decoration: line-through; color: #5f6368; }
+  .todo-del {
+    color: #5f6368; cursor: pointer; opacity: 0; transition: opacity 0.15s;
+    background: none; border: none; font-size: 0.9rem; padding: 0 2px;
+  }
+  .todo-item:hover .todo-del { opacity: 1; color: #f28b82; }
+  .todo-empty { text-align: center; color: #9aa0a6; font-size: 0.83rem; padding: 18px 0; }
+  .todo-footer { display: flex; justify-content: space-between; margin-top: 10px; }
+  .todo-count { font-size: 0.73rem; color: #9aa0a6; }
+  .todo-clear { font-size: 0.73rem; color: #f28b82; cursor: pointer; background: none; border: none; font-family: inherit; }
+  .todo-clear:hover { text-decoration: underline; }
+
+  /* 로딩 */
+  .spinner {
+    width: 26px; height: 26px; border: 3px solid #3c4043;
+    border-top-color: #8ab4f8; border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 20px auto 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .load-msg { text-align: center; color: #9aa0a6; font-size: 0.85rem; padding-bottom: 10px; }
+
+  /* 푸터 */
+  .footer {
+    background: #171717; border-top: 1px solid #3c4043;
+    padding: 12px 24px; display: flex; justify-content: space-between;
+    font-size: 0.82rem; color: #9aa0a6; margin-top: auto;
+  }
+  .footer a { color: #9aa0a6; text-decoration: none; margin: 0 8px; }
+  .footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; padding: 0 12px 30px; }
+    .clock-big { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 상단 바 -->
+<div class="topbar">
+  <div class="logo-text">
+    <span class="g">G</span><span class="o1">o</span><span class="o2">o</span><span class="g2">g</span><span class="l">l</span><span class="e">e</span>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-link" href="#">Gmail</a>
+    <a class="topbar-link" href="#">이미지</a>
+    <button class="topbar-btn">로그인</button>
+  </div>
+</div>
+
+<!-- 검색 -->
+<div class="search-section">
+  <div style="width:100%;max-width:580px;">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Google 검색 또는 URL 입력"
+        onkeydown="if(event.key==='Enter') doSearch()">
+      <span style="color:#4285F4;cursor:pointer">🎤</span>
+    </div>
+    <div class="search-btns">
+      <button class="search-btn" onclick="doSearch()">Google 검색</button>
+      <button class="search-btn" onclick="doLucky()">행운을 빌어요!</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2x2 메모지 그리드 -->
+<div class="grid">
+
+  <!-- 시계 -->
+  <div class="memo memo-clock">
+    <div class="memo-bar"></div>
+    <div class="memo-body">
+      <div class="memo-label">현재 시간</div>
+      <div class="clock-big" id="clock">00:00:00</div>
+      <div class="clock-date" id="date"></div>
+      <div class="clock-greeting" id="greeting"></div>
+    </div>
+  </div>
+
+  <!-- 할 일 -->
+  <div class="memo memo-todo">
+    <div class="memo-bar"></div>
+    <div class="memo-body">
+      <div class="memo-label">오늘의 할 일</div>
+      <div class="todo-input-row">
+        <input class="todo-input" id="todoInput" type="text" placeholder="할 일 추가..."
+          onkeydown="if(event.key==='Enter') addTodo()">
+        <button class="todo-add-btn" onclick="addTodo()">추가</button>
+      </div>
+      <div class="todo-list" id="todoList"></div>
+      <div class="todo-footer">
+        <span class="todo-count" id="todoCount"></span>
+        <button class="todo-clear" onclick="clearDone()">완료 항목 삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 날씨 -->
+  <div class="memo memo-weather">
+    <div class="memo-bar"></div>
+    <div class="memo-body">
+      <div class="memo-label">오늘의 날씨</div>
+      <div id="weather-content">
+        <div class="spinner"></div><div class="load-msg">불러오는 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 뉴스 -->
+  <div class="memo memo-news">
+    <div class="memo-bar"></div>
+    <div class="memo-body">
+      <div class="memo-label">
+        최신 기술 뉴스
+        <button class="refresh-btn" onclick="loadNews()">🔄 새로고침</button>
+      </div>
+      <div id="news-content">
+        <div class="spinner"></div><div class="load-msg">뉴스 불러오는 중...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 푸터 -->
+<div class="footer">
+  <div>대한민국</div>
+  <div>
+    <a href="#">광고</a><a href="#">비즈니스</a><a href="#">개인정보처리방침</a><a href="#">설정</a>
+  </div>
+</div>
+
+<script>
+// 시계 & 인사
+function greeting(h) {
+  if (h < 6)  return '🌙 좋은 새벽이에요!';
+  if (h < 12) return '🌅 좋은 아침이에요!';
+  if (h < 18) return '☀️ 좋은 오후예요!';
+  return '🌆 좋은 저녁이에요!';
+}
+function updateClock() {
+  const now = new Date(), pad = n => String(n).padStart(2,'0');
+  document.getElementById('clock').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const days = ['일','월','화','수','목','금','토'];
+  document.getElementById('date').textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+  document.getElementById('greeting').textContent = greeting(now.getHours());
+}
+setInterval(updateClock, 1000); updateClock();
+
+// 검색
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+}
+function doLucky() {
+  const q = document.getElementById('searchInput').value.trim();
+  window.open(`https://www.google.com/search?q=${encodeURIComponent(q||'오늘의 행운')}&btnI=1`, '_blank');
+}
+
+// 날씨
+function weatherInfo(code) {
+  if (code===0) return {desc:'맑음',icon:'☀️'};
+  if (code<=2)  return {desc:'구름 조금',icon:'🌤️'};
+  if (code===3) return {desc:'흐림',icon:'☁️'};
+  if (code<=49) return {desc:'안개',icon:'🌫️'};
+  if (code<=59) return {desc:'이슬비',icon:'🌦️'};
+  if (code<=69) return {desc:'비',icon:'🌧️'};
+  if (code<=79) return {desc:'눈',icon:'❄️'};
+  return {desc:'소나기',icon:'⛈️'};
+}
+async function loadWeather() {
+  try {
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.2&longitude=126.8&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weathercode&timezone=Asia/Seoul');
+    const d = await res.json(), c = d.current;
+    const {desc,icon} = weatherInfo(c.weathercode);
+    document.getElementById('weather-content').innerHTML = `
+      <div class="weather-location">📍 화성시, 경기도</div>
+      <div class="weather-main">
+        <span class="weather-icon">${icon}</span>
+        <div><div class="weather-temp">${Math.round(c.temperature_2m)}°</div><div class="weather-desc">${desc}</div></div>
+      </div>
+      <div class="weather-details">
+        <div class="w-detail"><div class="lbl">습도</div><div class="val">${c.relative_humidity_2m}%</div></div>
+        <div class="w-detail"><div class="lbl">풍속</div><div class="val">${c.wind_speed_10m} km/h</div></div>
+      </div>`;
+  } catch { document.getElementById('weather-content').innerHTML = '<div class="load-msg">불러올 수 없습니다.</div>'; }
+}
+
+/**
+ * 동아사이언스 공개 RSS를 사용하여 최신 기술/과학 뉴스를 가져옵니다.
+ *
+ * @async
+ * @function loadNews
+ * @returns {Promise<void>}
+ */
+const loadNews = async () => {
+  document.getElementById('news-content').innerHTML = '<div class="spinner"></div><div class="load-msg">최신 기술 뉴스 검색 중...</div>';
+  try {
+    const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://rss.donga.com/science.xml');
+    if (!res.ok) throw new Error('API 응답에 문제가 발생했습니다.');
+    
+    const data = await res.json();
+    if (data.status !== 'ok') throw new Error('RSS 파싱 실패');
+
+    const news = data.items.slice(0, 5).map(item => {
+      // HTML 태그 제거 및 텍스트만 추출
+      const descText = item.description.replace(/<[^>]*>?/gm, '').trim();
+      const summary = descText.length > 55 ? descText.substring(0, 55) + '...' : descText;
+      
+      return {
+        title: item.title,
+        summary: summary || '과학/기술 분야 최신 뉴스입니다.',
+        category: 'Tech/Sci',
+        time: item.pubDate ? item.pubDate.split(' ')[0] : '',
+        url: item.link
+      };
+    });
+    
+    document.getElementById('news-content').innerHTML = `<div class="news-list">${
+      news.map(n=>`<div class="news-item" onclick="window.open('${n.url}', '_blank')">
+        <span class="news-tag">${n.category}</span>
+        <div class="news-title">${n.title}</div>
+        <div class="news-summary">${n.summary}</div>
+        <div class="news-time">${n.time}</div>
+      </div>`).join('')
+    }</div>`;
+  } catch (error) { 
+    document.getElementById('news-content').innerHTML = '<div class="load-msg">뉴스를 불러올 수 없습니다. 잠시 후 ↻ 새로고침 해주세요.</div>'; 
+  }
+};
+window.loadNews = loadNews;
+
+// 할 일
+let todos = [];
+function renderTodos() {
+  const list = document.getElementById('todoList');
+  const count = document.getElementById('todoCount');
+  if (!todos.length) {
+    list.innerHTML = '<div class="todo-empty">✅ 할 일을 추가해 보세요!</div>';
+    count.textContent = ''; return;
+  }
+  count.textContent = `${todos.filter(t=>t.done).length}/${todos.length} 완료`;
+  list.innerHTML = todos.map((t,i)=>`
+    <div class="todo-item">
+      <div class="todo-check ${t.done?'done':''}" onclick="toggleTodo(${i})"></div>
+      <span class="todo-text ${t.done?'done':''}" onclick="toggleTodo(${i})">${t.text}</span>
+      <button class="todo-del" onclick="deleteTodo(${i})">✕</button>
+    </div>`).join('');
+}
+function addTodo() {
+  const inp = document.getElementById('todoInput');
+  const text = inp.value.trim(); if (!text) return;
+  todos.push({text, done:false}); inp.value = ''; renderTodos();
+}
+function toggleTodo(i) { todos[i].done = !todos[i].done; renderTodos(); }
+function deleteTodo(i) { todos.splice(i,1); renderTodos(); }
+function clearDone() { todos = todos.filter(t=>!t.done); renderTodos(); }
+
+renderTodos();
+loadWeather();
+loadNews();
+</script>
+</body>
+</html>
